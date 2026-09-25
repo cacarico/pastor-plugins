@@ -1,0 +1,30 @@
+# GitHub issues as pastor items: one task per labelled issue, a comment on
+# the issue when the task ends. Talks to GitHub through the gh CLI, so the
+# login gh already has is the only credential; nothing goes in .env.
+id = "github-issues"
+name = "GitHub Issues"
+version = "0.1.0"
+min_pastor_version = "0.3.0"
+description = "One item per issue carrying a label; comments on the issue when its task is done"
+
+[connector]
+mode = "poll"
+command = ["sh", "poll.sh"]
+timeout = "60s"
+
+[connector.config.repo]
+required = true
+description = "Repository to watch, as owner/name"
+
+[connector.config.label]
+description = "Only issues carrying this label become items (default: pastor)"
+
+[connector.config.state]
+description = "open, closed or all (default: open)"
+
+# Tells the issue how its task ended. only_own keeps it to tasks this
+# connector queued; there is no issue to comment on for any other.
+[[events]]
+on = ["task.done"]
+only_own = true
+command = ["sh", "hook.sh"]
