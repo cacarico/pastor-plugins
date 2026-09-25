@@ -1,4 +1,4 @@
 {"type":"log","level":"info","message":"2 issues in acme/widgets labelled pastor, state open, updated since 2026-09-20T08:00:00Z"}
 {"type":"item","key":"12","title":"Login form loses the \"remember me\" box","body":"Steps:\n1. open /login\n2. tick the box\n\nIt is gone after a reload.","url":"https://github.com/acme/widgets/issues/12","author":"ana"}
 {"type":"item","key":"9","title":"Crash on 'é' in usernames","body":"","url":"https://github.com/acme/widgets/issues/9","author":"bo"}
-{"type":"cursor","value":"2026-09-24T09:30:00Z"}
+{"type":"cursor","value":"2026-09-25T10:00:00Z"}

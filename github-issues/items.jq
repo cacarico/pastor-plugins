@@ -1,8 +1,10 @@
 # Shapes `gh api --paginate` output into pastor lines. The input is slurped:
 # an array of pages, each a JSON array of issues. Pull requests come from the
-# same endpoint (with a `pull_request` key) and are not issues to work on.
-[.[][] | select(.pull_request == null)]
-| sort_by(.updated_at)
+# same endpoint (with a `pull_request` key) and are not issues to work on, but
+# they still move the cursor: otherwise a run whose newest rows are all pull
+# requests would ask for the same page forever.
+[.[][]] | sort_by(.updated_at) as $all
+| [$all[] | select(.pull_request == null)]
 | {
     type: "log",
     level: "info",
@@ -17,4 +19,4 @@
     author: .user.login
   }),
   # The newest change seen; the next run asks for updates from here on.
-  (if length > 0 then {type: "cursor", value: .[-1].updated_at} else empty end)
+  (if ($all | length) > 0 then {type: "cursor", value: $all[-1].updated_at} else empty end)
