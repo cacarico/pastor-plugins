@@ -61,7 +61,7 @@ query($owner: String!, $name: String!, $endCursor: String) {
         headRefOid
         reviews(first: 100) {
           pageInfo { hasNextPage }
-          nodes { databaseId url submittedAt author { login } }
+          nodes { fullDatabaseId url submittedAt author { login } }
         }
         reviewThreads(first: 100) {
           pageInfo { hasNextPage }
@@ -69,7 +69,7 @@ query($owner: String!, $name: String!, $endCursor: String) {
             isResolved
             comments(first: 50) {
               pageInfo { hasNextPage }
-              nodes { databaseId path line originalLine body pullRequestReview { databaseId } }
+              nodes { fullDatabaseId path line originalLine body pullRequestReview { fullDatabaseId } }
             }
           }
         }

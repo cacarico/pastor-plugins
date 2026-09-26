@@ -13,25 +13,25 @@
               "pageInfo": {"hasNextPage": false},
               "nodes": [
                 {
-                  "databaseId": 8000,
+                  "fullDatabaseId": "8000",
                   "url": "https://github.com/acme/widgets/pull/41#pullrequestreview-8000",
                   "submittedAt": "2026-09-10T09:00:00Z",
                   "author": {"login": "copilot-pull-request-reviewer"}
                 },
                 {
-                  "databaseId": 9001,
+                  "fullDatabaseId": "5325684665",
                   "url": "https://github.com/acme/widgets/pull/41#pullrequestreview-9001",
                   "submittedAt": "2026-09-24T10:00:00Z",
                   "author": {"login": "copilot-pull-request-reviewer"}
                 },
                 {
-                  "databaseId": 9002,
+                  "fullDatabaseId": "9002",
                   "url": "https://github.com/acme/widgets/pull/41#pullrequestreview-9002",
                   "submittedAt": "2026-09-25T09:00:00Z",
                   "author": {"login": "ana"}
                 },
                 {
-                  "databaseId": 9004,
+                  "fullDatabaseId": "9004",
                   "url": "https://github.com/acme/widgets/pull/41#pullrequestreview-9004",
                   "submittedAt": null,
                   "author": {"login": "copilot-pull-request-reviewer"}
@@ -44,28 +44,28 @@
                 {
                   "isResolved": false,
                   "comments": {"pageInfo": {"hasNextPage": false}, "nodes": [
-                    {"databaseId": 501, "path": "src/limit.rs", "line": 12, "originalLine": 12,
+                    {"fullDatabaseId": "501", "path": "src/limit.rs", "line": 12, "originalLine": 12,
                      "body": "The window is never reset, so a client stays blocked forever.",
-                     "pullRequestReview": {"databaseId": 9001}}
+                     "pullRequestReview": {"fullDatabaseId": "5325684665"}}
                   ]}
                 },
                 {
                   "isResolved": false,
                   "comments": {"pageInfo": {"hasNextPage": false}, "nodes": [
-                    {"databaseId": 502, "path": "src/login.rs", "line": null, "originalLine": 30,
+                    {"fullDatabaseId": "502", "path": "src/login.rs", "line": null, "originalLine": 30,
                      "body": "`unwrap()` on the header panics on a request without \"X-Forwarded-For\".",
-                     "pullRequestReview": {"databaseId": 9001}},
-                    {"databaseId": 503, "path": "src/login.rs", "line": null, "originalLine": 30,
+                     "pullRequestReview": {"fullDatabaseId": "5325684665"}},
+                    {"fullDatabaseId": "503", "path": "src/login.rs", "line": null, "originalLine": 30,
                      "body": "Good catch, will fix.",
-                     "pullRequestReview": {"databaseId": 9002}}
+                     "pullRequestReview": {"fullDatabaseId": "9002"}}
                   ]}
                 },
                 {
                   "isResolved": true,
                   "comments": {"pageInfo": {"hasNextPage": false}, "nodes": [
-                    {"databaseId": 504, "path": "README.md", "line": 3, "originalLine": 3,
+                    {"fullDatabaseId": "504", "path": "README.md", "line": 3, "originalLine": 3,
                      "body": "Typo: 'limitter'.",
-                     "pullRequestReview": {"databaseId": 9001}}
+                     "pullRequestReview": {"fullDatabaseId": "5325684665"}}
                   ]}
                 }
               ]
@@ -91,7 +91,7 @@
               "pageInfo": {"hasNextPage": false},
               "nodes": [
                 {
-                  "databaseId": 9003,
+                  "fullDatabaseId": "9003",
                   "url": "https://github.com/acme/widgets/pull/42#pullrequestreview-9003",
                   "submittedAt": "2026-09-23T12:00:00Z",
                   "author": {"login": "copilot-pull-request-reviewer"}

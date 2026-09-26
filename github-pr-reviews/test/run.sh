@@ -46,7 +46,7 @@ gh_got name=widgets
 echo "poll: only_with_findings = false keeps clean reviews, since from the handshake when there is no cursor"
 printf '%s\n' '{"config":{"repo":"acme/widgets","only_with_findings":false},"cursor":null,"since":"2026-09-01T00:00:00Z"}' \
   | sh poll.sh > "$tmp/out"
-[ "$(keys)" = "8000,9003,9001" ] || fail "expected reviews 8000,9003,9001, got $(keys)"
+[ "$(keys)" = "8000,9003,5325684665" ] || fail "expected reviews 8000,9003,5325684665, got $(keys)"
 [ "$(jq -r 'select(.key == "9003") | .body' "$tmp/out")" = "" ] || fail "the clean review has a body"
 [ "$(cursor)" = "2026-09-25T09:00:00Z" ] || fail "cursor is $(cursor)"
 
@@ -94,7 +94,7 @@ done
 pr41 '.headRefName = "user/feat_x-1.2"'
 printf '%s\n' '{"config":{"repo":"acme/widgets"},"cursor":"2026-09-20T08:00:00Z"}' \
   | GH_FIXTURE="$tmp/fixture.json" sh poll.sh > "$tmp/out"
-[ "$(keys)" = "9001" ] || fail "a safe branch made items $(keys)"
+[ "$(keys)" = "5325684665" ] || fail "a safe branch made items $(keys)"
 
 echo "poll: truncated threads or comments make no item from that pull request and hold the cursor at its first new review"
 for trunc in '.reviewThreads.pageInfo.hasNextPage = true' '.reviewThreads.nodes[1].comments.pageInfo.hasNextPage = true'; do

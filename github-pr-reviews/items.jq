@@ -43,17 +43,17 @@ def truncated:
     | [ .pr.reviewThreads.nodes[]
         | select(.isResolved | not)
         | .comments.nodes[]
-        | select(.pullRequestReview.databaseId == $r.databaseId) ] as $open
+        | select(.pullRequestReview.fullDatabaseId == $r.fullDatabaseId) ] as $open
     | select(($open | length) > 0 or ($only_with_findings | not))
     | {
         type: "item",
-        key: ($r.databaseId | tostring),
+        key: ($r.fullDatabaseId | tostring),
         pr: .pr.number,
         title: .pr.title,
         branch: .pr.headRefName,
         head: .pr.headRefOid,
         review_url: $r.url,
-        body: ($open | map("## \(.databaseId)\n\(location)\n\(.body)") | join("\n\n"))
+        body: ($open | map("## \(.fullDatabaseId)\n\(location)\n\(.body)") | join("\n\n"))
       } ]
 | {
     type: "log",
