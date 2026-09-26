@@ -33,11 +33,11 @@ state = "open"          # default; open, closed or all
 [dispatch]
 repo = "~/work/widgets"
 worktree = true
-branch = "issue-{{ item.key }}"
+branch = "pastor/issue-{{ item.key }}"
 backfill = "30d"
 max_tasks_per_run = 2
 prompt = """
-You are in a worktree of widgets on branch issue-{{ item.key }}, task {{ task.id }}.
+You are in a worktree of widgets on branch pastor/issue-{{ item.key }}, task {{ task.id }}.
 Fix GitHub issue #{{ item.key }} by {{ item.author }}: {{ item.title }}
 {{ item.url }}
 
