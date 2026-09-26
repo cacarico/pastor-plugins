@@ -1,0 +1,24 @@
+# Review findings on GitHub pull requests as pastor items: one task per
+# review by a matching reviewer (Copilot by default), carrying the review's
+# unresolved inline comments. Talks to GitHub through the gh CLI, so the
+# login gh already has is the only credential; nothing goes in .env.
+id = "github-pr-reviews"
+name = "GitHub PR Reviews"
+version = "0.1.0"
+min_pastor_version = "0.5.0"
+description = "One item per pull request review by a matching reviewer, with its unresolved comments"
+
+[connector]
+mode = "poll"
+command = ["sh", "poll.sh"]
+timeout = "60s"
+
+[connector.config.repo]
+required = true
+description = "Repository to watch, as owner/name"
+
+[connector.config.reviewer]
+description = "Regex matched against the reviewer's login, ignoring case (default: copilot)"
+
+[connector.config.only_with_findings]
+description = "Skip reviews with no unresolved inline comments (default: true)"

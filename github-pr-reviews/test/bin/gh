@@ -1,0 +1,7 @@
+#!/bin/sh
+# A stand-in for gh: records its arguments and answers `api` from GH_FIXTURE,
+# so poll.sh can be checked without a GitHub login or the network.
+printf '%s\n' "$@" > "$GH_ARGS"
+case "$1" in
+  api) cat "$GH_FIXTURE" ;;
+esac
