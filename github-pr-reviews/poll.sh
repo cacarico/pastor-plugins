@@ -47,7 +47,8 @@ esac
 # One query per page of pull requests brings their reviews and review
 # threads too. Resolution lives on the thread, which only GraphQL exposes.
 # The page sizes keep the query under GitHub's node limit
-# (25 * (100 + 100 * 50)); nested lists past them are logged, not read.
+# (25 * (100 + 100 * 50)). Nested lists are not paginated; items.jq skips a
+# pull request that has more and holds the cursor for it.
 query='
 query($owner: String!, $name: String!, $endCursor: String) {
   repository(owner: $owner, name: $name) {
@@ -67,6 +68,7 @@ query($owner: String!, $name: String!, $endCursor: String) {
           nodes {
             isResolved
             comments(first: 50) {
+              pageInfo { hasNextPage }
               nodes { databaseId path line originalLine body pullRequestReview { databaseId } }
             }
           }

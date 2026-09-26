@@ -40,11 +40,10 @@ branch = "pastor/review-{{ item.key }}"
 backfill = "1d"
 max_tasks_per_run = 2
 prompt = """
-You are in a worktree of widgets, task {{ task.id }}. Put it on the head of
-pull request #{{ item.pr }} ({{ item.title }}) before anything else:
+You are in a worktree of widgets, task {{ task.id }}. Put it on pull request
+#{{ item.pr }} ({{ item.title }}) before anything else:
 
-    git fetch origin {{ item.branch }}
-    git reset --hard origin/{{ item.branch }}
+    gh pr checkout {{ item.pr }}
 
 A review left the findings below, each a comment id, a file and line, and
 the comment. Review: {{ item.review_url }}
@@ -52,8 +51,7 @@ the comment. Review: {{ item.review_url }}
 {{ item.body }}
 
 Fix each finding that is right and say why for each one you leave. Commit,
-push with `git push origin HEAD:{{ item.branch }}`, and print DONE as your
-last line.
+push with a plain `git push`, and print DONE as your last line.
 """
 ```
 
@@ -61,7 +59,10 @@ pastor does not let an item name the branch a worktree is created on: an
 item value in `branch` must be one path component, never the first one, so
 it cannot point an agent at `main` (and head branches often hold a `/`).
 The worktree gets a branch of its own, and the prompt moves it to the pull
-request's head and pushes back there.
+request with `gh pr checkout`, which also sets the upstream that a plain
+`git push` goes to. The prompt names the pull request by its number, never by
+its branch: a branch name is chosen by whoever opened the pull request, and
+an agent may paste it into a shell.
 
 Each item has `key` (the review id, as a string), `pr` (the pull request
 number), `title` (the pull request's title), `branch` (its head branch),
@@ -80,6 +81,11 @@ current line, or the line it was made on when the code has moved since. With
 `only_with_findings = false`, a review with no unresolved comments is still
 an item, with an empty body.
 
+A pull request whose head branch holds anything but letters, digits, `/`,
+`-`, `_` and `.`, starts with `-` or holds `..` makes no items; it is logged
+with level `warn` and its reviews still move the cursor. Even a checked
+branch is best kept out of commands: `item.pr` is a number.
+
 ## How runs are bounded
 
 Every run reads all open pull requests, then looks only at reviews submitted
@@ -94,9 +100,15 @@ A review makes one task. pastor remembers the keys it has queued, and
 resolving threads later does not change a review's id. A fix pushed to the
 branch usually brings a new review, which is a new item.
 
-Each pull request contributes at most 100 reviews and 100 review threads,
-and each thread 50 comments. A pull request past those is logged with level
-`warn`.
+One query reads at most 100 reviews and 100 review threads per pull
+request, and 50 comments per thread; these lists are not paginated. A pull
+request with more makes no items, since any of its reviews could be missing
+findings, and is logged with level `warn` each run. It also holds the cursor
+so that nothing it has is lost: at the cursor the run started from when its
+reviews were cut short, or at its first new review when its threads or
+comments were. The cursor stays there until the pull request is closed;
+other pull requests' reviews still make items meanwhile, and pastor does not
+queue a key twice.
 
 ## Try it
 
@@ -119,5 +131,5 @@ make check
 from `test/pulls.json` (two pull requests: one Copilot review with two
 unresolved findings and a resolved one, one clean review) and records its
 arguments, then checks the emitted lines against `test/expected.jsonl`, the
-reviewer and `only_with_findings` settings, the cursor and the config
-validation. Nothing touches the network.
+reviewer and `only_with_findings` settings, the cursor, unsafe head
+branches, cut-short nested lists and the config validation. Nothing touches the network.

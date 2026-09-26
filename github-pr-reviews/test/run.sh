@@ -40,6 +40,8 @@ gh_got graphql
 gh_got --paginate
 gh_got owner=acme
 gh_got name=widgets
+# Every nested list asks whether it was cut short, so items.jq can tell.
+[ "$(grep -c 'pageInfo { hasNextPage }' "$GH_ARGS")" = 3 ] || fail "a nested list in the query lacks pageInfo"
 
 echo "poll: only_with_findings = false keeps clean reviews, since from the handshake when there is no cursor"
 printf '%s\n' '{"config":{"repo":"acme/widgets","only_with_findings":false},"cursor":null,"since":"2026-09-01T00:00:00Z"}' \
@@ -68,6 +70,49 @@ printf '%s\n' '{"config":{"repo":"acme/widgets"},"cursor":null,"since":"2026-09-
 if jq -e 'select(.type != "log")' "$tmp/out" > /dev/null; then
   fail "an empty page produced items or a cursor"
 fi
+
+# Writes a copy of the fixture with $1, a jq filter, applied to pull request
+# #41, and points gh at it.
+pr41() {
+  jq "(.data.repository.pullRequests.nodes[] | select(.number == 41)) |= ($1)" test/pulls.json > "$tmp/fixture.json"
+}
+
+warned() {
+  jq -e --arg re "$1" 'select(.type == "log" and .level == "warn" and (.message | test($re)))' "$tmp/out" > /dev/null \
+    || fail "no warning matching $1"
+}
+
+echo "poll: a head branch that is not shell-safe makes no item, but still moves the cursor"
+for branch in 'x;touch pwned' '$(id)' '-f' 'a..b' 'has space' 'a`b`' "it's"; do
+  pr41 ".headRefName = $(jq -n --arg b "$branch" '$b')"
+  printf '%s\n' '{"config":{"repo":"acme/widgets"},"cursor":"2026-09-20T08:00:00Z"}' \
+    | GH_FIXTURE="$tmp/fixture.json" sh poll.sh > "$tmp/out"
+  [ "$(keys)" = "" ] || fail "branch $branch made items $(keys)"
+  warned '#41'
+  [ "$(cursor)" = "2026-09-25T09:00:00Z" ] || fail "cursor is $(cursor) with branch $branch"
+done
+pr41 '.headRefName = "user/feat_x-1.2"'
+printf '%s\n' '{"config":{"repo":"acme/widgets"},"cursor":"2026-09-20T08:00:00Z"}' \
+  | GH_FIXTURE="$tmp/fixture.json" sh poll.sh > "$tmp/out"
+[ "$(keys)" = "9001" ] || fail "a safe branch made items $(keys)"
+
+echo "poll: truncated threads or comments make no item from that pull request and hold the cursor at its first new review"
+for trunc in '.reviewThreads.pageInfo.hasNextPage = true' '.reviewThreads.nodes[1].comments.pageInfo.hasNextPage = true'; do
+  pr41 "$trunc"
+  printf '%s\n' '{"config":{"repo":"acme/widgets","only_with_findings":false},"cursor":null,"since":"2026-09-01T00:00:00Z"}' \
+    | GH_FIXTURE="$tmp/fixture.json" sh poll.sh > "$tmp/out"
+  [ "$(keys)" = "9003" ] || fail "with $trunc expected review 9003, got $(keys)"
+  warned '#41'
+  [ "$(cursor)" = "2026-09-10T09:00:00Z" ] || fail "with $trunc cursor is $(cursor)"
+done
+
+echo "poll: truncated reviews make no item from that pull request and keep the cursor where it was"
+pr41 '.reviews.pageInfo.hasNextPage = true'
+printf '%s\n' '{"config":{"repo":"acme/widgets","only_with_findings":false},"cursor":"2026-09-05T00:00:00Z"}' \
+  | GH_FIXTURE="$tmp/fixture.json" sh poll.sh > "$tmp/out"
+[ "$(keys)" = "9003" ] || fail "expected review 9003, got $(keys)"
+warned '#41'
+[ "$(cursor)" = "2026-09-05T00:00:00Z" ] || fail "cursor is $(cursor)"
 
 refused() {
   rm -f "$GH_ARGS"
