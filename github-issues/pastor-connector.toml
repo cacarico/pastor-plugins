@@ -3,8 +3,8 @@
 # login gh already has is the only credential; nothing goes in .env.
 id = "github-issues"
 name = "GitHub Issues"
-version = "0.1.0"
-min_pastor_version = "0.3.0"
+version = "0.2.0"
+min_pastor_version = "0.5.0"
 description = "One item per issue carrying a label; comments on the issue when its task is done"
 
 [connector]

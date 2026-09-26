@@ -1,4 +1,5 @@
-# pastor-plugins
+# pastor-connectors
 
-Plugins for [pastor](https://github.com/cacarico/pastor). Each directory is one
-plugin; install it with `pastor plugin install <dir>`.
+Connectors for [pastor](https://github.com/cacarico/pastor). Each directory is one
+connector; install it with `pastor connector install cacarico/pastor-connectors/<dir>`.
+They need pastor 0.5.0 or later, which calls these connectors instead of plugins.

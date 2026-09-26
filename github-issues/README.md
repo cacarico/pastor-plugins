@@ -7,15 +7,15 @@ has not seen. When a task is done, a hook comments on its issue with the
 task id and final state.
 
 GitHub is reached through the `gh` CLI, so the login `gh` already has on the
-head is the only credential. The plugin declares no secrets and needs
+head is the only credential. The connector declares no secrets and needs
 nothing in `.env`. It needs `gh`, `jq` and a POSIX `sh` on the head.
 
 ## Install
 
 ```bash
-pastor plugin install cacarico/pastor-plugins/github-issues
+pastor connector install cacarico/pastor-connectors/github-issues
 # or, from a checkout:
-pastor plugin link ./github-issues
+pastor connector link ./github-issues
 ```
 
 ## Job
@@ -77,12 +77,12 @@ at the task's output and the pull request, if any.
 ## Try it
 
 ```bash
-pastor plugin link ./github-issues
-pastor plugin run github-issues --job widgets --since 90d   # prints items, creates nothing
-pastor plugin unlink github-issues
+pastor connector link ./github-issues
+pastor connector run github-issues --job widgets --since 90d   # prints items, creates nothing
+pastor connector unlink github-issues
 ```
 
-`plugin run` reads the job's `[connector]` table from its file, which may
+`connector run` reads the job's `[connector]` table from its file, which may
 have `enabled = false`.
 
 ## Test
